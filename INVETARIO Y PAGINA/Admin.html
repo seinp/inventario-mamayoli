@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MamaYoli - Panel de Administración</title>
+    <!-- Enlaces de Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Enlace a tu archivo de estilos CSS -->
+    <link rel="stylesheet" href="./ASSETS/CSS/estilosAdmin.css">
+    <!-- Enlace a los iconos de Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+    <!-- ---------------------------------------------------- -->
+    <!-- BARRA DE NAVEGACIÓN Y ACCIONES ADMINISTRATIVAS -->
+    <!-- ---------------------------------------------------- -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+        <div class="container-fluid">
+            <!-- Logo y Título -->
+            <a class="navbar-brand fw-bold fs-4 ms-2" href="admin.html">
+                <i data-lucide="gem" class="me-2"></i> MamaYoli - ADMINISTRACIÓN
+            </a>
+            
+            <!-- Barra de Búsqueda -->
+            <form class="d-flex mx-lg-4 my-2 my-lg-0 navbar-search-form flex-grow-1" onsubmit="event.preventDefault(); filterProducts();">
+                <input class="form-control rounded-pill me-2" type="search" placeholder="Buscar por código, categoría, o nombre..." id="adminSearchInput" aria-label="Search">
+            </form>
+
+            <div class="d-flex align-items-center">
+                <!-- Botón de Historial de Ventas (redirección) -->
+                <button class="btn btn-warning btn-circle me-3" type="button" onclick="window.location.href='HistorialdeVentas.html'" title="Historial de Ventas">
+                    <i data-lucide="history" style="width: 20px;"></i>
+                </button>
+                <!-- Botón de Clientes (redirección) -->
+                <button class="btn btn-info btn-circle me-3" type="button" onclick="window.location.href='Clientes.html'" title="Ver Clientes">
+                    <i data-lucide="users" style="width: 20px;"></i>
+                </button>
+                <!-- Botón de Facturar (redirección) -->
+                <button class="btn btn-success btn-circle me-3" type="button" onclick="window.location.href='Facturacion.html'" title="Facturar">
+                    <i data-lucide="file-text" style="width: 20px;"></i>
+                </button>
+                <!-- Botón de Categorías (Modal) -->
+                <button class="btn btn-pink btn-circle me-3" type="button" data-bs-toggle="modal" data-bs-target="#categoriesModal" title="Gestionar Categorías">
+                    <i data-lucide="list-checks" style="width: 20px;"></i>
+                </button>
+                
+                <!-- Botón de Agregar Producto (Modal) -->
+                <button class="btn btn-primary btn-circle me-3" type="button" onclick="openProductModal('create')" title="Agregar Nuevo Producto">
+                    <i data-lucide="plus" style="width: 20px;"></i>
+                </button>
+                
+                <!-- Botón Cerrar Sesión -->
+                <button class="btn btn-outline-pink btn-circle" onclick="logout()" title="Cerrar Sesión">
+                    <i data-lucide="log-out" style="width: 20px;"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ---------------------------------------------------- -->
+    <!-- CONTENIDO PRINCIPAL: GESTIÓN DE PRODUCTOS -->
+    <!-- ---------------------------------------------------- -->
+    <main class="container-fluid py-4">
+        
+        <!-- MÓDULO DE RESUMEN/DASHBOARD -->
+        <section class="row mb-4 g-2 justify-content-center">
+            <div class="col-md-3">
+                <div class="card bg-light-light text-pink p-2 shadow-sm rounded-3 h-100 d-flex align-items-center justify-content-center">
+                    <div class="card-body p-0 w-100 d-flex flex-column align-items-center justify-content-center">
+                        <div class="d-flex flex-column align-items-center justify-content-center w-100">
+                            <i data-lucide="package" style="width: 24px; height: 24px;" class="mb-1"></i>
+                            <p class="card-text fw-bold fs-5 text-center w-100" id="totalProductsCount">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-light-light text-pink p-2 shadow-sm rounded-3 h-100 d-flex align-items-center justify-content-center">
+                    <div class="card-body p-0 w-100 d-flex flex-column align-items-center justify-content-center">
+                        <div class="d-flex flex-column align-items-center justify-content-center w-100">
+                            <i data-lucide="alert-triangle" style="width: 24px; height: 24px;" class="mb-1"></i>
+                            <p class="card-text fw-bold fs-5 text-stock-low text-center w-100" id="lowStockCount" style="cursor:pointer;" onclick="filterProducts('stockbajo')">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-light-light text-pink p-2 shadow-sm rounded-3 h-100 d-flex align-items-center justify-content-center">
+                    <div class="card-body p-0 w-100 d-flex flex-column align-items-center justify-content-center">
+                        <div class="d-flex flex-column align-items-center justify-content-center w-100">
+                            <i data-lucide="check-circle" style="width: 24px; height: 24px;" class="mb-1"></i>
+                            <div class="d-flex gap-2 align-items-center justify-content-center w-100">
+                                <span class="fw-bold fs-5 text-success text-center w-100" id="publishedCount" style="min-width:2em;">0</span>
+                                <span class="fw-bold fs-5 text-muted text-center">-</span>
+                                <span class="fw-bold fs-5 text-danger text-center w-100" id="unpublishedCount" style="cursor:pointer;min-width:2em;" onclick="filterProducts('unpublished')">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-light-light text-pink p-2 shadow-sm rounded-3 h-100 d-flex align-items-center justify-content-center">
+                    <div class="card-body p-0 w-100 d-flex flex-column align-items-center justify-content-center">
+                        <div class="d-flex flex-column align-items-center justify-content-center w-100">
+                            <i data-lucide="tags" style="width: 24px; height: 24px;" class="mb-1"></i>
+                            <p class="card-text fw-bold fs-5 text-center w-100" id="totalCategoriesCount">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TABLA DE GESTIÓN DE PRODUCTOS -->
+        <section class="card shadow-lg border-0 rounded-3">
+            <div class="card-header bg-white border-bottom-0 pt-4">
+                <h3 class="text-pink fw-bold">Inventario de Bisutería</h3>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-pink-light">
+                            <tr>
+                                <th scope="col"># ID</th>
+                                <th scope="col">Imagen</th>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Categoría</th>
+                                <th scope="col">Stock</th>
+                                <th scope="col">Precio ($)</th>
+                                <th scope="col">Publicado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryTableBody">
+                            <!-- Los productos se insertarán aquí -->
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Mensaje sin resultados o vacío -->
+                <p id="noResultsAdmin" class="text-center text-muted py-5 d-none">No se encontraron productos que coincidan con la búsqueda.</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- ---------------------------------------------------- -->
+    <!-- MODAL DE GESTIÓN DE CATEGORÍAS -->
+    <!-- ---------------------------------------------------- -->
+    <div class="modal fade" id="categoriesModal" tabindex="-1" aria-labelledby="categoriesModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-pink fw-bold" id="categoriesModalLabel">Gestionar Categorías</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted">Añade o elimina categorías para usarlas en los productos.</p>
+                    <div class="input-group mb-3">
+                        <input type="text" id="newCategoryInput" class="form-control rounded-pill" placeholder="Nombre de la nueva categoría">
+                        <button class="btn btn-pink rounded-pill ms-2" type="button" id="addCategoryBtn">
+                            <i data-lucide="plus" style="width: 16px;"></i> Añadir
+                        </button>
+                    </div>
+                    <ul class="list-group" id="categoriesList">
+                        <!-- Las categorías se insertarán aquí -->
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-pink rounded-pill" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ---------------------------------------------------- -->
+    <!-- MODAL DE GESTIÓN DE PRODUCTO (CRUD) -->
+    <!-- ---------------------------------------------------- -->
+    <div class="modal fade" id="productCrudModal" tabindex="-1" aria-labelledby="productCrudModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-pink fw-bold" id="productCrudModalLabel">Crear Nuevo Producto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="productForm">
+                    <div class="modal-body">
+                        <input type="hidden" id="productIdHidden">
+                        
+                        <h4 class="text-pink mb-3">Información Principal</h4>
+
+                        <!-- Fila 1: Nombre y Categoría -->
+                        <div class="row mb-3">
+                            <div class="col-md-8">
+                                <label for="productName" class="form-label">Nombre del Producto *</label>
+                                <input type="text" class="form-control rounded-pill" id="productName" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="productCategory" class="form-label">Categoría *</label>
+                                <select class="form-select rounded-pill" id="productCategory" required>
+                                    <!-- Opciones de categorías se cargarán aquí -->
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Fila 2: Costo, Precio, Ganancia -->
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="productCosto" class="form-label">Costo (Compra) *</label>
+                                <input type="number" step="0.01" min="0" class="form-control rounded-pill" id="productCosto" required oninput="calculateProfit()">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="productPrecio" class="form-label">Precio (Venta) *</label>
+                                <input type="number" step="0.01" min="0" class="form-control rounded-pill" id="productPrecio" required oninput="calculateProfit()">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="productGanancia" class="form-label">Ganancia ($)</label>
+                                <input type="text" class="form-control rounded-pill fw-bold bg-light" id="productGanancia" readonly>
+                            </div>
+                        </div>
+                        
+                        <!-- Fila 3: Stock y Publicado -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="productStock" class="form-label">Stock (Cantidad) *</label>
+                                <input type="number" min="0" class="form-control rounded-pill" id="productStock" required>
+                            </div>
+                            <div class="col-md-6 d-flex align-items-end">
+                                <div class="form-check form-switch pb-1">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="productActivo" checked>
+                                    <label class="form-check-label" for="productActivo">Publicar en Catálogo (Activo)</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Fila 4: Descripción -->
+                        <div class="mb-4">
+                            <label for="productDescription" class="form-label">Descripción</label>
+                            <textarea class="form-control rounded-3" id="productDescription" rows="3"></textarea>
+                        </div>
+                        
+                        <!-- Área de Imágenes (URLs) -->
+                        <h4 class="text-pink mb-3">Imágenes del Producto (Máx. 10)</h4>
+                        <div class="mb-4">
+                            <div id="adminImageCarouselContainer">
+                                <!-- Carrusel de imágenes generado por JS -->
+                            </div>
+                            <button type="button" class="btn btn-outline-primary w-100 mt-3" id="addImageToCarouselBtn">
+                                <i data-lucide="plus" style="width: 16px;"></i> Agregar imagen al carrusel
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-footer d-flex justify-content-between">
+                        <!-- Botón de Eliminar (visible solo en edición) -->
+                        <button type="button" class="btn btn-outline-danger rounded-pill" id="deleteProductBtn" style="display: none;" onclick="showConfirmDeleteModal()">
+                            <i data-lucide="trash" style="width: 16px;"></i> Eliminar Producto
+                        </button>
+                        
+                        <div class="ms-auto">
+                            <button type="button" class="btn btn-outline-pink rounded-pill me-2" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary rounded-pill" id="saveProductBtn">
+                                Guardar Producto
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ---------------------------------------------------- -->
+    <!-- MODAL DE CONFIRMACIÓN DE ELIMINACIÓN -->
+    <!-- ---------------------------------------------------- -->
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmar Eliminación</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    ¿Estás seguro de que deseas eliminar permanentemente <span class="fw-bold" id="productToDeleteName"></span>? Esta acción no se puede deshacer.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger rounded-pill" onclick="deleteProductConfirmed()">
+                        <i data-lucide="trash" style="width: 16px;"></i> Eliminar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Script de Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Enlace a los iconos de Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Lógica Admin debe ir después de Lucide -->
+    <script src="./ASSETS/JS/LogicaAdmin.js"></script>
+    
+</body>
+</html>

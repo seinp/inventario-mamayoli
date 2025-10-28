@@ -1,0 +1,226 @@
+/* Variables de Color de MamaYoli: Rosado, Dorado, Blanco */
+
+:root {
+	--pink-light: #FBE5E6;
+	/* Fondo suave o acento muy claro */
+	--pink-dark: #E88D92;
+	/* Rosado principal para textos y botones */
+	--gold: #D4AF37;
+	/* Dorado para precios y acentos de lujo */
+	--white: #ffffff;
+	/* Fondo principal */
+	--font-color: #333333;
+	/* Texto oscuro */
+	--danger: #dc3545;
+	/* Para alertas de stock bajo */
+}
+
+body {
+	background-color: var(--pink-light);
+	/* MODIFICACIÓN: Fondo Rosado Claro */
+	color: var(--font-color);
+	font-family: 'Inter', sans-serif;
+}
+
+
+/* Clases de utilidad para el tema */
+
+.text-pink {
+	color: var(--pink-dark) !important;
+}
+
+.bg-pink-light {
+	background-color: var(--pink-light) !important;
+}
+
+
+/* Navbar */
+
+.navbar-brand {
+	color: var(--pink-dark);
+}
+
+.navbar-search-form {
+	max-width: 400px;
+}
+
+.form-control.rounded-pill {
+	border-color: var(--pink-light);
+	transition: all 0.3s ease;
+}
+
+.form-control.rounded-pill:focus {
+	border-color: var(--pink-dark);
+	box-shadow: 0 0 0 0.25rem rgba(232, 141, 146, 0.25);
+	/* Rosado con opacidad */
+}
+
+
+/* Carrusel de Banners */
+
+#productCarousel .carousel-item img {
+	height: 400px;
+	/* Altura fija para escritorio */
+	object-fit: cover;
+}
+
+@media (max-width: 768px) {
+	#productCarousel .carousel-item img {
+		height: 200px;
+		/* Menor altura en móvil */
+	}
+}
+
+
+/* Tarjetas de Productos */
+
+.product-card {
+	border: 1px solid var(--pink-light);
+	border-radius: 12px;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.product-card:hover {
+	transform: translateY(-5px);
+	box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+}
+
+.product-card .card-img-top {
+	height: 200px;
+	object-fit: cover;
+	border-top-left-radius: 12px;
+	border-top-right-radius: 12px;
+}
+
+
+/* Estilo de Precio (Dorado) */
+
+.price-text {
+	color: var(--gold);
+	font-weight: bold;
+}
+
+
+/* Botones Personalizados de la Marca */
+
+
+/* Botón de Añadir al Carrito (Modal Footer) y Botones Admin */
+
+.btn-pink {
+	--bs-btn-color: var(--white);
+	--bs-btn-bg: var(--pink-dark);
+	--bs-btn-border-color: var(--pink-dark);
+	--bs-btn-hover-bg: #c77b81;
+	/* Un rosado ligeramente más oscuro */
+	--bs-btn-hover-border-color: #c77b81;
+	--bs-btn-active-bg: #b0696e;
+	--bs-btn-active-border-color: #b0696e;
+}
+
+
+/* Botón Primario para Carrito (Finalizar Compra) y Botones Admin */
+
+.btn-primary {
+	--bs-btn-color: var(--white);
+	--bs-btn-bg: var(--gold);
+	--bs-btn-border-color: var(--gold);
+	--bs-btn-hover-bg: #c9a435;
+	--bs-btn-hover-border-color: #c9a435;
+	--bs-btn-active-bg: #b08d29;
+	--bs-btn-active-border-color: #b08d29;
+}
+
+.btn-primary:disabled {
+	--bs-btn-bg: #e0d0a8;
+	/* Dorado apagado */
+	--bs-btn-border-color: #e0d0a8;
+}
+
+/* Botón dorado pequeño (para el buscador) */
+.btn-gold {
+	--bs-btn-color: var(--white);
+	--bs-btn-bg: var(--gold);
+	--bs-btn-border-color: var(--gold);
+	--bs-btn-hover-bg: #c9a435;
+	--bs-btn-hover-border-color: #c9a435;
+	--bs-btn-active-bg: #b08d29;
+	--bs-btn-active-border-color: #b08d29;
+	padding: 0.45rem 0.5rem;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.btn-gold.btn-circle {
+	width: 40px;
+	height: 40px;
+}
+
+
+/* Botón de Carrito en Navbar (Outline) */
+
+.btn-outline-pink {
+	--bs-btn-color: var(--pink-dark);
+	--bs-btn-border-color: var(--pink-dark);
+	--bs-btn-hover-color: var(--white);
+	--bs-btn-hover-bg: var(--pink-dark);
+	--bs-btn-active-color: var(--white);
+	--bs-btn-active-bg: var(--pink-dark);
+	--bs-btn-active-border-color: var(--pink-dark);
+}
+
+
+/* Insignia del Carrito (Redondeada) */
+
+.cart-badge {
+	padding: 0.35em 0.65em;
+	font-size: 0.7em;
+	background-color: var(--pink-dark) !important;
+}
+
+
+/* Modal de Detalle y Admin */
+
+.modal-content {
+	background-color: var(--white);
+}
+
+.modal-header {
+	border-bottom-color: var(--pink-light);
+}
+
+.modal-footer {
+	border-top-color: var(--pink-light);
+}
+
+
+/* --- ESTILOS ESPECÍFICOS DE ADMIN --- */
+
+
+/* Botones redondos de acción */
+
+.btn-circle {
+	width: 40px;
+	height: 40px;
+	padding: 0;
+	border-radius: 50%;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 1.2rem;
+}
+
+
+/* Estilo para stock bajo */
+
+.text-stock-low {
+	color: var(--danger) !important;
+	font-weight: bold;
+}
+
+/* Scroll en modal de producto admin */
+.modal-dialog-scrollable .modal-body {
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
